@@ -2,6 +2,7 @@
 title: "Convênio de saúde: como cobrar certo sem travar o caixa da clínica"
 description: "Veja como organizar preço, prazo de repasse e faturamento por convênio de saúde sem perder dinheiro nem travar o financeiro da clínica."
 pubDate: "2026-08-19"
+heroImage: "../../assets/convenio-saude-cover.png"
 categories:
   - "Gestão Financeira"
   - "Saúde"

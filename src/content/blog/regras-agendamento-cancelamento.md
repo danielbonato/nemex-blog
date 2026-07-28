@@ -2,6 +2,7 @@
 title: "Por que ter regras claras de agendamento e cancelamento protege a margem da sua equipe"
 description: "Veja como criar políticas de agendamento, tolerância de atraso e cancelamento que protegem o faturamento da equipe sem afastar clientes."
 pubDate: "2026-08-26"
+heroImage: "../../assets/regras-agendamento-cover.png"
 categories:
   - "Gestão"
   - "Atendimento"

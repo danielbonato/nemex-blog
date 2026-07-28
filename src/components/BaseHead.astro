@@ -1,37 +1,97 @@
 ---
-// Import the global.css file here so that it is included on
-// all pages through the use of the <BaseHead /> component.
+// Import global styling and types
 import '../styles/global.css';
 import type { ImageMetadata } from 'astro';
-import FallbackImage from '../assets/blog-placeholder-1.jpg';
 import { SITE_TITLE } from '../consts';
-import { Font } from 'astro:assets';
 import { ClientRouter } from 'astro:transitions';
 
 interface Props {
 	title: string;
 	description: string;
-	image?: ImageMetadata;
+	image?: ImageMetadata | string;
+	article?: boolean;
 }
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const { title, description, image, article = false } = Astro.props;
 
-const { title, description, image = FallbackImage } = Astro.props;
+// Format page title to always include "Blog Agenda Certo" on internal pages
+const pageTitle = title === SITE_TITLE || title.includes(SITE_TITLE)
+	? title
+	: `${title} | ${SITE_TITLE}`;
+
+// Resolve canonical URL safely
+const siteUrl = Astro.site || Astro.url;
+const canonicalURL = new URL(Astro.url.pathname, siteUrl);
+
+// Resolve OG image URL safely
+let imageSrc = '/og-image.jpg';
+if (image) {
+	if (typeof image === 'string') {
+		imageSrc = image;
+	} else if (typeof image === 'object' && 'src' in image) {
+		imageSrc = image.src;
+	}
+}
+const imageURL = new URL(imageSrc, siteUrl);
+
+// Structured data for Schema.org (Google SEO Rich Snippets)
+const schemaData = article
+	? {
+			'@context': 'https://schema.org',
+			'@type': 'BlogPosting',
+			'headline': title,
+			'description': description,
+			'image': imageURL.href,
+			'url': canonicalURL.href,
+			'publisher': {
+				'@type': 'Organization',
+				'name': 'Agenda Certo',
+				'logo': {
+					'@type': 'ImageObject',
+					'url': new URL('/favicon.png', siteUrl).href,
+				},
+			},
+	  }
+	: {
+			'@context': 'https://schema.org',
+			'@type': 'WebSite',
+			'name': SITE_TITLE,
+			'description': description,
+			'url': siteUrl.href,
+	  };
 ---
 
 <!-- Global Metadata -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-<link rel="icon" href="/favicon.ico" />
+
+<!-- Favicon & Icons -->
+<link rel="icon" type="image/png" href="/favicon.png" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 <link rel="sitemap" href="/sitemap-index.xml" />
 <link
 	rel="alternate"
 	type="application/rss+xml"
 	title={SITE_TITLE}
-	href={new URL('rss.xml', Astro.site)}
+	href={new URL('rss.xml', siteUrl)}
 />
 <meta name="generator" content={Astro.generator} />
+
+<!-- Google Tag Manager -->
+<script is:inline>
+	(function (w, d, s, l, i) {
+		w[l] = w[l] || [];
+		w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+		var f = d.getElementsByTagName(s)[0],
+			j = d.createElement(s),
+			dl = l != 'dataLayer' ? '&l=' + l : '';
+		j.async = true;
+		j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+		f.parentNode.insertBefore(j, f);
+	})(window, document, 'script', 'dataLayer', 'GTM-T5W4F6H4');
+</script>
+<!-- End Google Tag Manager -->
 
 <!-- Import Google Fonts for Plus Jakarta Sans -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -45,15 +105,27 @@ const { title, description, image = FallbackImage } = Astro.props;
 <link rel="canonical" href={canonicalURL} />
 
 <!-- Primary Meta Tags -->
-<title>{title}</title>
+<title>{pageTitle}</title>
+<meta name="title" content={pageTitle} />
 <meta name="description" content={description} />
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
 
-<!-- Open Graph / Facebook -->
-<meta property="og:type" content="website" />
-<meta property="og:url" content={Astro.url} />
-<meta property="og:title" content={title} />
+<!-- Open Graph / Facebook / WhatsApp -->
+<meta property="og:type" content={article ? "article" : "website"} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:title" content={pageTitle} />
 <meta property="og:description" content={description} />
-<meta property="og:image" content={new URL(image.src, Astro.url)} />
+<meta property="og:image" content={imageURL} />
+<meta property="og:image:alt" content={title} />
+<meta property="og:site_name" content={SITE_TITLE} />
+<meta property="og:locale" content="pt_BR" />
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content={canonicalURL} />
+<meta name="twitter:title" content={pageTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imageURL} />
+
+<!-- Schema.org JSON-LD for Google -->
+<script type="application/ld+json" set:html={JSON.stringify(schemaData)} />

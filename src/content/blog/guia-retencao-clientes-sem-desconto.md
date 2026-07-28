@@ -2,6 +2,7 @@
 title: "Guia de retenção de clientes para barbearias e estética: como fazer o cliente voltar sem dar desconto"
 description: "Aumente a taxa de retorno em barbearias, salões e clínicas de estética com conveniência, histórico de atendimento e automação, sem depender de desconto."
 pubDate: "2026-08-12"
+heroImage: "../../assets/retencao-clientes-cover.png"
 categories:
   - "Fidelização"
   - "Vendas"

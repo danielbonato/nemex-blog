@@ -197,37 +197,6 @@ const { categoryName, posts } = Astro.props;
 				color: var(--looka-primary);
 			}
 
-			/* Footer Info Bar */
-			.overlay-footer {
-				display: flex;
-				align-items: center;
-				justify-content: space-between;
-				flex-wrap: wrap;
-				gap: 1rem;
-				padding-top: 1rem;
-				border-top: 1px solid #f3f4f6;
-			}
-
-			.author-group {
-				display: flex;
-				align-items: center;
-				gap: 0.75rem;
-			}
-
-			.author-avatar-img {
-				width: 40px;
-				height: 40px;
-				border-radius: 50%;
-				object-fit: cover;
-				background-color: #f3f4f6;
-			}
-
-			.author-label {
-				font-size: 0.9rem;
-				font-weight: 600;
-				color: #374151;
-			}
-
 			@media (max-width: 1024px) {
 				.looka-grid {
 					grid-template-columns: 1fr;
@@ -253,6 +222,15 @@ const { categoryName, posts } = Astro.props;
 		</style>
 	</head>
 	<body>
+		<!-- Google Tag Manager (noscript) -->
+		<noscript
+			><iframe
+				src="https://www.googletagmanager.com/ns.html?id=GTM-T5W4F6H4"
+				height="0"
+				width="0"
+				style="display:none;visibility:hidden"></iframe></noscript
+		>
+		<!-- End Google Tag Manager (noscript) -->
 		<Header />
 		<main class="looka-blog-section">
             <div class="category-header">
@@ -264,7 +242,6 @@ const { categoryName, posts } = Astro.props;
 				<section class="blog-main-feed">
 					{posts.map((post: any) => {
 						const categoriesList = post.data.categories || (post.data.category ? [post.data.category] : ['Geral']);
-						const authorName = post.data.author || 'Equipe Agenda Certo';
 
 						return (
 							<article class="modern-article-card">
@@ -298,13 +275,6 @@ const { categoryName, posts } = Astro.props;
 									<h2 class="article-title">
 										<a href={`/blog/${post.id}/`}>{post.data.title}</a>
 									</h2>
-
-									<div class="overlay-footer">
-										<div class="author-group">
-											<img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=40&h=40&q=80" alt={authorName} class="author-avatar-img" />
-											<span class="author-label">Por {authorName}</span>
-										</div>
-									</div>
 								</div>
 							</article>
 						);

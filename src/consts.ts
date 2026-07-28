@@ -1,5 +1,3 @@
-// Place any global data in this file.
-// You can import this data from anywhere in your site by using the `import` keyword.
-
-export const SITE_TITLE = 'Astro Blog';
-export const SITE_DESCRIPTION = 'Welcome to my website!';
+// Global site configuration
+export const SITE_TITLE = 'Blog Agenda Certo';
+export const SITE_DESCRIPTION = 'Conteúdos, guias e estratégias de gestão, agendamento e crescimento para salões de beleza, barbearias e clínicas de estética.';
