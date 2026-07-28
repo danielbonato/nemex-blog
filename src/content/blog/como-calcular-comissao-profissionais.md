@@ -1,7 +1,7 @@
 ---
 title: "Como calcular a comissão dos profissionais do seu salão ou clínica sem errar o caixa"
 description: "Aprenda a calcular comissão de cabeleireiros, barbeiros e esteticistas sem comprometer a margem do caixa, com modelos práticos e automação."
-pubDate: "2026-08-05"
+pubDate: "2026-07-28"
 categories:
   - "Gestão Financeira"
   - "Gestão"
