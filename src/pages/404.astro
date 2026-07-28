@@ -1,0 +1,120 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="pt-BR">
+	<head>
+		<BaseHead title={`Página não encontrada | ${SITE_TITLE}`} description="A página que você está procurando não existe." />
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+				background: #030712 !important; /* Overrides global.css gradient */
+				color: #f8fafc;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				min-height: 100vh;
+				text-align: center;
+			}
+			
+			.error-container {
+				max-width: 32rem;
+				padding: 2rem;
+				position: relative;
+				z-index: 10;
+			}
+
+			.logo {
+				height: 2.25rem;
+				margin-bottom: 2.5rem;
+			}
+
+			.error-code {
+				font-size: 6rem;
+				font-weight: 800;
+				line-height: 1;
+				background-image: linear-gradient(to right, #f97316, #ea580c);
+				-webkit-background-clip: text;
+				background-clip: text;
+				color: transparent;
+				margin: 0 0 1rem 0;
+				letter-spacing: -0.05em;
+			}
+
+			.error-title {
+				font-size: 1.75rem;
+				font-weight: 700;
+				margin: 0 0 1rem 0;
+				color: #ffffff;
+			}
+
+			.error-message {
+				font-size: 1.125rem;
+				color: #94a3b8;
+				margin: 0 0 2.5rem 0;
+				line-height: 1.6;
+			}
+
+			.back-button {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				border-radius: 0.75rem;
+				background-color: #ea580c;
+				padding: 1rem 2.5rem;
+				font-size: 1rem;
+				font-weight: 700;
+				color: #ffffff;
+				text-decoration: none;
+				box-shadow: 0 10px 15px -3px rgba(234, 88, 12, 0.3);
+				transition: all 0.2s;
+			}
+
+			.back-button:hover {
+				background-color: #c2410c;
+				box-shadow: 0 15px 25px -5px rgba(234, 88, 12, 0.4);
+				transform: translateY(-2px);
+			}
+
+			/* Efeito de clarão no fundo (igual ao CTA) */
+			.bg-glow {
+				pointer-events: none;
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				height: 500px;
+				width: 500px;
+				transform: translate(-50%, -50%);
+				border-radius: 9999px;
+				background-color: rgba(234, 88, 12, 0.15);
+				filter: blur(120px);
+				z-index: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="bg-glow"></div>
+		
+		<main class="error-container">
+			<a href="/" aria-label="Voltar para a Home">
+				<img src="https://www.agendacerto.com.br/agendacerto-white.svg" alt="Agenda Certo" class="logo"/>
+			</a>
+			
+			<h1 class="error-code">404</h1>
+			<h2 class="error-title">Página não encontrada</h2>
+			
+			<p class="error-message">
+				Ops! A página que você está procurando não existe ou foi movida. 
+				Mas não se preocupe, o nosso blog está cheio de conteúdos incríveis esperando por você.
+			</p>
+			
+			<a href="/" class="back-button">
+				Voltar para o Blog
+			</a>
+		</main>
+	</body>
+</html>

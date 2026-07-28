@@ -1,0 +1,240 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import Sidebar from '../components/Sidebar.astro';
+import CtaAgendaCerto from '../components/CtaAgendaCerto.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+
+const allPosts = await getCollection('blog');
+const searchIndex = allPosts.map(post => ({
+	id: post.id,
+	title: post.data.title,
+	description: post.data.description,
+	image: post.data.heroImage,
+	date: post.data.pubDate.toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric' }),
+	url: `/blog/${post.id}/`,
+	categories: post.data.categories || (post.data.category ? [post.data.category] : ['Geral'])
+}));
+---
+
+<!doctype html>
+<html lang="pt-BR">
+	<head>
+		<BaseHead title={`Resultados da Busca | ${SITE_TITLE}`} description={SITE_DESCRIPTION} />
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+		<style>
+			:root {
+				--looka-primary: #ea580c;
+				--looka-dark: #0f172a;
+				--looka-text: #334155;
+				--font-sans: 'Plus Jakarta Sans', sans-serif;
+				--font-syne: 'Plus Jakarta Sans', sans-serif;
+			}
+
+			body {
+				font-family: var(--font-sans);
+				color: var(--looka-text);
+				background-color: #ffffff;
+			}
+
+			.looka-blog-section {
+				width: 100%;
+				max-width: 1240px;
+				margin: 0 auto;
+				padding: 3.5rem 1.5rem;
+			}
+            
+            .search-header {
+                margin-bottom: 2rem;
+                padding-bottom: 1rem;
+                border-bottom: 1px solid #e2e8f0;
+            }
+            .search-header h1 {
+                font-size: 2.5rem;
+                color: var(--looka-dark);
+                margin: 0;
+            }
+            .search-header p {
+                color: #64748b;
+                margin-top: 0.5rem;
+                font-size: 1.1rem;
+            }
+
+			.looka-grid {
+				display: grid;
+				grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+				gap: 3rem;
+				align-items: start;
+			}
+
+			.blog-main-feed {
+				display: flex;
+				flex-direction: column;
+				gap: 3rem;
+			}
+
+            /* Simplified Search Results Card */
+            .search-result-card {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+                padding: 1.5rem;
+                border: 1px solid #e2e8f0;
+                border-radius: 12px;
+                transition: border-color 0.2s, box-shadow 0.2s;
+            }
+
+            @media (min-width: 640px) {
+                .search-result-card {
+                    flex-direction: row;
+                    align-items: flex-start;
+                }
+            }
+
+            .search-result-card:hover {
+                border-color: #ea580c;
+                box-shadow: 0 4px 15px rgba(234, 88, 12, 0.1);
+            }
+
+            .result-img-wrapper {
+                width: 100%;
+                height: 200px;
+                border-radius: 8px;
+                overflow: hidden;
+                flex-shrink: 0;
+            }
+
+            @media (min-width: 640px) {
+                .result-img-wrapper {
+                    width: 240px;
+                    height: 160px;
+                }
+            }
+
+            .result-img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.3s ease;
+            }
+            .search-result-card:hover .result-img {
+                transform: scale(1.05);
+            }
+
+            .result-content {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .result-meta {
+                font-size: 0.85rem;
+                color: #ea580c;
+                font-weight: 600;
+            }
+
+            .result-title {
+                margin: 0;
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: #0f172a;
+                line-height: 1.2;
+            }
+            .result-title a {
+                color: inherit;
+                text-decoration: none;
+            }
+            .search-result-card:hover .result-title a {
+                color: #ea580c;
+            }
+
+            .result-desc {
+                margin: 0;
+                color: #475569;
+                font-size: 1rem;
+                line-height: 1.5;
+            }
+
+			@media (max-width: 1024px) {
+				.looka-grid {
+					grid-template-columns: 1fr;
+					gap: 2.5rem;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main class="looka-blog-section">
+            <div class="search-header">
+                <h1>Resultados da Busca</h1>
+                <p id="search-status">Pesquisando...</p>
+            </div>
+			<div class="looka-grid">
+				<section class="blog-main-feed" id="search-results">
+                    <!-- Javascript will inject results here -->
+				</section>
+				<aside class="blog-sidebar-feed">
+					<Sidebar />
+				</aside>
+			</div>
+		</main>
+		<CtaAgendaCerto />
+		<Footer />
+
+        <script is:inline define:vars={{ searchIndex }}>
+            document.addEventListener('DOMContentLoaded', () => {
+                const urlParams = new URLSearchParams(window.location.search);
+                const query = urlParams.get('q');
+                const statusEl = document.getElementById('search-status');
+                const resultsEl = document.getElementById('search-results');
+
+                if (!query) {
+                    statusEl.textContent = 'Nenhum termo de pesquisa fornecido.';
+                    resultsEl.innerHTML = '<p>Por favor, digite algo na barra de pesquisa ao lado.</p>';
+                    return;
+                }
+
+                statusEl.textContent = `Buscando por: "${query}"`;
+                const q = query.toLowerCase();
+
+                const filtered = searchIndex.filter(post => {
+                    return post.title.toLowerCase().includes(q) || 
+                           post.description.toLowerCase().includes(q) ||
+                           post.categories.some(cat => cat.toLowerCase().includes(q));
+                });
+
+                if (filtered.length === 0) {
+                    statusEl.textContent = `Nenhum resultado encontrado para: "${query}"`;
+                    resultsEl.innerHTML = '<p>Não encontramos nenhum post com essas palavras. Tente outra busca!</p>';
+                    return;
+                }
+
+                statusEl.textContent = `${filtered.length} resultado(s) para: "${query}"`;
+                
+                let html = '';
+                filtered.forEach(post => {
+                    html += `
+                    <article class="search-result-card">
+                        <div class="result-img-wrapper">
+                            <a href="${post.url}">
+                                <img src="${post.image}" alt="${post.title}" class="result-img" />
+                            </a>
+                        </div>
+                        <div class="result-content">
+                            <span class="result-meta">${post.categories.join(' • ')} — ${post.date}</span>
+                            <h2 class="result-title"><a href="${post.url}">${post.title}</a></h2>
+                            <p class="result-desc">${post.description}</p>
+                        </div>
+                    </article>
+                    `;
+                });
+                resultsEl.innerHTML = html;
+            });
+        </script>
+	</body>
+</html>

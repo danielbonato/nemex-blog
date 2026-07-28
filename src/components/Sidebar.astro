@@ -1,0 +1,410 @@
+---
+import { Image } from 'astro:assets';
+import FormattedDate from './FormattedDate.astro';
+import { getPublishedPosts } from '../lib/posts';
+
+const posts = await getPublishedPosts();
+
+const categoryCountsMap = new Map<string, number>();
+
+posts.forEach(post => {
+	// Pega as categorias do post ou uma categoria padrão caso não tenha nenhuma
+	const cats = post.data.categories || (post.data.category ? [post.data.category] : ['Geral']);
+	cats.forEach(c => {
+		categoryCountsMap.set(c, (categoryCountsMap.get(c) || 0) + 1);
+	});
+});
+
+// Transforma o Map num array, ordena pelo número de posts (maior pro menor) e depois alfabeticamente
+const categoryList = Array.from(categoryCountsMap.entries())
+	.map(([name, count]) => ({
+		name,
+		count,
+		slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+	}))
+	.sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+
+// Recent posts (top 3)
+const recentPosts = posts.slice(0, 3);
+---
+
+<aside class="looka-sidebar">
+	<!-- 1. Search Widget -->
+	<section class="sidebar-widget">
+		<h2 class="widget-title">Buscar no Blog</h2>
+		<form class="search-form" action="/busca" method="get">
+			<input
+				type="text"
+				name="q"
+				placeholder="Pesquisar por..."
+				class="search-input"
+				required
+			/>
+			<button type="submit" class="search-btn" aria-label="Search">
+				<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M7 7h10v10"></path>
+					<path d="M7 17 17 7"></path>
+				</svg>
+			</button>
+		</form>
+	</section>
+
+	<!-- 2. Category Widget -->
+	<section class="sidebar-widget">
+		<h2 class="widget-title">Categorias</h2>
+		<div class="category-list">
+			{categoryList.map(cat => (
+				<div class="category-item">
+					<span class="cat-arrow">
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+							<path d="m9 18 6-6-6-6"></path>
+						</svg>
+					</span>
+					<a href={`/blog/category/${cat.slug}/`} class="cat-link">
+						{cat.name}
+					</a>
+					<span class="cat-badge">{cat.count}</span>
+				</div>
+			))}
+		</div>
+	</section>
+
+	<!-- 3. Recent Posts Widget -->
+	<section class="sidebar-widget">
+		<h2 class="widget-title">Posts Recentes</h2>
+		<div class="recent-posts-container">
+			{recentPosts.map(post => (
+				<article class="recent-post-item">
+					<div class="recent-thumb-wrapper">
+						{post.data.heroImage && (
+							<Image
+								src={post.data.heroImage}
+								alt={post.data.title}
+								width={140}
+								height={100}
+								class="recent-thumb-img"
+							/>
+						)}
+						<a href={`/blog/${post.id}/`} class="thumb-overlay-link" title={post.data.title}></a>
+					</div>
+					<div class="recent-post-info">
+						<h3 class="recent-post-title">
+							<a href={`/blog/${post.id}/`}>{post.data.title}</a>
+						</h3>
+						<span class="recent-post-date">
+							<FormattedDate date={post.data.pubDate} />
+						</span>
+					</div>
+				</article>
+			))}
+		</div>
+	</section>
+
+	<!-- 4. Agenda Certo CTA Widget -->
+	<section class="cta-banner-widget">
+		<div class="cta-banner-glow" aria-hidden="true"></div>
+		<div class="cta-banner-content">
+			<img src="/logo-agenda-certo.svg" alt="Agenda Certo" class="cta-banner-logo" />
+			<h3 class="cta-title">Quer atrair mais clientes?</h3>
+			<p class="cta-sub">Teste o Agenda Certo grátis por 30 dias, sem cartão de crédito.</p>
+			<a href="https://www.agendacerto.com.br/cadastro?origem=blog" class="cta-btn" target="_blank" rel="noopener noreferrer">
+				Criar Conta
+				<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M7 7h10v10"></path>
+					<path d="M7 17 17 7"></path>
+				</svg>
+			</a>
+		</div>
+	</section>
+</aside>
+
+<style>
+	.looka-sidebar {
+		display: flex;
+		flex-direction: column;
+		gap: 2.5rem;
+		width: 100%;
+	}
+
+	.sidebar-widget {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.widget-title {
+		font-family: var(--font-secondary, 'Syne', sans-serif);
+		font-size: 1.25rem;
+		font-weight: 700;
+		color: #000e30;
+		padding-bottom: 0.85rem;
+		margin: 0 0 1.25rem 0;
+		border-bottom: 1px solid rgba(229, 233, 240, 0.8);
+		letter-spacing: -0.01em;
+	}
+
+	/* Search Form */
+	.search-form {
+		position: relative;
+		width: 100%;
+	}
+
+	.search-input {
+		width: 100%;
+		box-sizing: border-box;
+		background-color: #ffffff;
+		border: 1px solid #e5e7eb;
+		border-radius: 8px;
+		padding: 0.85rem 3.5rem 0.85rem 1rem;
+		font-size: 0.9rem;
+		color: #1f2937;
+		outline: none;
+		transition: border-color 0.2s ease, box-shadow 0.2s ease;
+	}
+
+	.search-input:focus {
+		border-color: #ea580c;
+		box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.12);
+	}
+
+	.search-input::placeholder {
+		color: #9ca3af;
+	}
+
+	.search-btn {
+		position: absolute;
+		right: 6px;
+		top: 6px;
+		bottom: 6px;
+		background-color: #f3f4f6;
+		border: none;
+		border-radius: 6px;
+		padding: 0 0.9rem;
+		color: #4b5563;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: background-color 0.2s ease, color 0.2s ease;
+	}
+
+	.search-btn:hover {
+		background-color: #ea580c;
+		color: #ffffff;
+	}
+
+	/* Category Items */
+	.category-list {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+
+	.category-item {
+		position: relative;
+		display: flex;
+		align-items: center;
+		padding: 0.65rem 0;
+		border-bottom: 1px solid #f3f4f6;
+		transition: color 0.2s ease;
+	}
+
+	.category-item:last-child {
+		border-bottom: none;
+	}
+
+	.cat-arrow {
+		color: #9ca3af;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin-right: 0.75rem;
+		transition: transform 0.2s ease, color 0.2s ease;
+	}
+
+	.category-item:hover .cat-arrow {
+		transform: translateX(3px);
+		color: #ea580c;
+	}
+
+	.cat-link {
+		flex: 1;
+		color: #374151;
+		text-decoration: none;
+		font-size: 0.925rem;
+		font-weight: 500;
+		transition: color 0.2s ease;
+	}
+
+	.category-item:hover .cat-link {
+		color: #ea580c;
+	}
+
+	.cat-badge {
+		background-color: #f3f4f6;
+		color: #4b5563;
+		font-size: 0.8rem;
+		font-weight: 600;
+		width: 32px;
+		height: 32px;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: background-color 0.2s ease, color 0.2s ease;
+	}
+
+	.category-item:hover .cat-badge {
+		background-color: rgba(234, 88, 12, 0.1);
+		color: #ea580c;
+	}
+
+	/* Recent Posts Widget */
+	.recent-posts-container {
+		display: flex;
+		flex-direction: column;
+		gap: 1.15rem;
+	}
+
+	.recent-post-item {
+		display: grid;
+		grid-template-columns: 88px 1fr;
+		gap: 0.85rem;
+		align-items: center;
+	}
+
+	.recent-thumb-wrapper {
+		position: relative;
+		height: 68px;
+		width: 88px;
+		border-radius: 8px;
+		overflow: hidden;
+		background-color: #f3f4f6;
+	}
+
+	.recent-thumb-img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: transform 0.4s ease;
+	}
+
+	.recent-post-item:hover .recent-thumb-img {
+		transform: scale(1.08);
+	}
+
+	.thumb-overlay-link {
+		position: absolute;
+		inset: 0;
+		z-index: 2;
+	}
+
+	.recent-post-info {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+
+	.recent-post-title {
+		margin: 0;
+		font-size: 0.875rem;
+		font-weight: 600;
+		line-height: 1.35;
+		color: #000e30;
+	}
+
+	.recent-post-title a {
+		color: #000e30;
+		text-decoration: none;
+		transition: color 0.2s ease;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	.recent-post-item:hover .recent-post-title a {
+		color: #ea580c;
+	}
+
+	.recent-post-date {
+		font-size: 0.78rem;
+		color: #6b7280;
+		font-weight: 400;
+	}
+
+	/* Agenda Certo CTA Widget */
+	.cta-banner-widget {
+		position: relative;
+		overflow: hidden;
+		border-radius: 12px;
+		background-color: #030712;
+		box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+	}
+
+	.cta-banner-glow {
+		pointer-events: none;
+		position: absolute;
+		left: 50%;
+		top: -20%;
+		height: 220px;
+		width: 320px;
+		transform: translateX(-50%);
+		border-radius: 9999px;
+		background-color: rgba(246, 82, 5, 0.35);
+		filter: blur(70px);
+	}
+
+	.cta-banner-content {
+		position: relative;
+		padding: 2rem 1.5rem 1.75rem;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.85rem;
+		z-index: 2;
+	}
+
+	.cta-banner-logo {
+		height: 22px;
+		width: auto;
+		margin-bottom: 0.25rem;
+	}
+
+	.cta-title {
+		font-family: var(--font-secondary, 'Syne', sans-serif);
+		font-size: 1.35rem;
+		font-weight: 700;
+		color: #ffffff;
+		margin: 0;
+		line-height: 1.25;
+	}
+
+	.cta-sub {
+		font-size: 0.875rem;
+		color: rgba(255, 255, 255, 0.75);
+		margin: 0;
+	}
+
+	.cta-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		width: fit-content;
+		padding: 0.65rem 1.25rem;
+		background-color: #f65205;
+		border: 1px solid #f65205;
+		border-radius: 6px;
+		color: #ffffff;
+		text-decoration: none;
+		font-size: 0.875rem;
+		font-weight: 600;
+		transition: background-color 0.2s ease, transform 0.2s ease;
+		margin-top: 0.25rem;
+	}
+
+	.cta-btn:hover {
+		background-color: #d94600;
+		border-color: #d94600;
+		transform: translateY(-2px);
+	}
+</style>

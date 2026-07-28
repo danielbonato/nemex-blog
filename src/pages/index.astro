@@ -1,49 +1,330 @@
 ---
+import { Image } from 'astro:assets';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
+import Sidebar from '../components/Sidebar.astro';
+import CtaAgendaCerto from '../components/CtaAgendaCerto.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { getPublishedPosts } from '../lib/posts';
+
+const posts = await getPublishedPosts();
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<style>
+			:root {
+				--looka-primary: #ea580c; /* Updated to match Agenda Certo Orange */
+				--looka-dark: #0f172a;
+				--looka-text: #334155;
+				--font-sans: 'Plus Jakarta Sans', sans-serif;
+				--font-syne: 'Plus Jakarta Sans', sans-serif;
+			}
+
+			body {
+				font-family: var(--font-sans);
+				color: var(--looka-text);
+				background-color: #ffffff;
+			}
+
+			/* Looka Section & Container Grid (8 Columns & 4 Columns) */
+			.looka-blog-section {
+				width: 100%;
+				max-width: 1240px;
+				margin: 0 auto;
+				padding: 3.5rem 1.5rem;
+			}
+
+			.looka-grid {
+				display: grid;
+				grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+				gap: 3rem;
+				align-items: start;
+			}
+
+			.blog-main-feed {
+				display: flex;
+				flex-direction: column;
+				gap: 3rem;
+			}
+
+			/* Looka Blog Modern Article Card */
+			.modern-article-card {
+				position: relative;
+				display: flex;
+				flex-direction: column;
+				justify-content: flex-end;
+				min-height: 400px;
+				margin-bottom: 2rem;
+				border-radius: 16px;
+				overflow: hidden;
+				padding: 1.5rem;
+				background-color: #f3f4f6;
+			}
+
+			@media (min-width: 768px) {
+				.modern-article-card {
+					min-height: 520px;
+					padding: 2.5rem;
+				}
+			}
+
+			.article-image-link {
+				position: absolute;
+				inset: 0;
+				z-index: 1;
+			}
+
+			.article-bg-img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				transition: transform 0.6s ease;
+			}
+
+			.modern-article-card:hover .article-bg-img {
+				transform: scale(1.04);
+			}
+
+			/* Floating Overlay Content Box (Exact Looka Design) */
+			.overlay-card-box {
+				position: relative;
+				z-index: 10;
+				padding: 2rem 2.5rem;
+				background-color: rgba(255, 255, 255, 0.96);
+				backdrop-filter: blur(12px);
+				-webkit-backdrop-filter: blur(12px);
+				border-radius: 12px;
+				box-shadow: 0 12px 35px rgba(0, 14, 48, 0.08);
+			}
+
+			/* Meta Row (Date + Dots + Categories) */
+			.meta-row {
+				display: flex;
+				align-items: center;
+				flex-wrap: wrap;
+				gap: 0.6rem;
+				font-size: 0.9rem;
+				font-weight: 500;
+				color: var(--looka-primary);
+				margin-bottom: 0.85rem;
+			}
+
+			.meta-dot {
+				display: inline-block;
+				width: 4px;
+				height: 4px;
+				border-radius: 50%;
+				background-color: var(--looka-primary);
+			}
+
+			.meta-cat-link {
+				color: var(--looka-primary);
+				text-decoration: none;
+				transition: opacity 0.2s ease;
+			}
+
+			.meta-cat-link:hover {
+				text-decoration: underline;
+			}
+
+			/* Article Title */
+			.article-title {
+				font-family: var(--font-syne);
+				font-size: 1.65rem;
+				font-weight: 700;
+				line-height: 1.3;
+				color: var(--looka-dark);
+				margin: 0 0 1.25rem 0;
+				letter-spacing: -0.01em;
+			}
+
+			.article-title a {
+				color: var(--looka-dark);
+				text-decoration: none;
+				transition: color 0.2s ease;
+			}
+
+			.article-title a:hover {
+				color: var(--looka-primary);
+			}
+
+			/* Footer Info Bar (Author & Share Icons) */
+			.overlay-footer {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				flex-wrap: wrap;
+				gap: 1rem;
+				padding-top: 1rem;
+				border-top: 1px solid #f3f4f6;
+			}
+
+			.author-group {
+				display: flex;
+				align-items: center;
+				gap: 0.75rem;
+			}
+
+			.author-avatar-img {
+				width: 40px;
+				height: 40px;
+				border-radius: 50%;
+				object-fit: cover;
+				background-color: #f3f4f6;
+			}
+
+			.author-label {
+				font-size: 0.9rem;
+				font-weight: 600;
+				color: #374151;
+			}
+
+			/* Social Share Buttons */
+			.share-list {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+				display: flex;
+				align-items: center;
+				gap: 0.75rem;
+				opacity: 0.85;
+			}
+
+			.share-btn {
+				width: 36px;
+				height: 36px;
+				background-color: transparent;
+				color: var(--looka-dark);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				text-decoration: none;
+				transition: color 0.2s ease;
+			}
+
+			.share-btn:hover {
+				color: var(--looka-primary);
+			}
+
+			/* Responsividade */
+			@media (max-width: 1024px) {
+				.looka-grid {
+					grid-template-columns: 1fr;
+					gap: 2.5rem;
+				}
+
+				.looka-blog-section {
+					padding: 2rem 1rem;
+				}
+			}
+
+			@media (max-width: 640px) {
+				.overlay-card-box {
+					margin-left: 2%;
+					margin-right: 2%;
+					padding: 1.25rem 1.25rem;
+				}
+
+				.article-title {
+					font-size: 1.3rem;
+				}
+			}
+		</style>
 	</head>
 	<body>
 		<Header />
-		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This template
-				serves as a lightweight, minimally-styled starting point for anyone looking to build a personal
-				website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to
-				<a href="https://docs.astro.build/">read the docs</a>
-				or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out
-				<a href="https://github.com/Charca/astro-blog-template">astro-blog-template</a>
-				by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
+		<main class="looka-blog-section">
+			<div class="looka-grid">
+				<!-- Área Principal do Conteúdo (8 Colunas) -->
+				<section class="blog-main-feed">
+					{posts.map((post) => {
+						const categoriesList = post.data.categories || (post.data.category ? [post.data.category] : ['Innovation', 'Technology']);
+						const authorName = post.data.author || 'Allium Johnson';
+
+						return (
+							<article class="modern-article-card">
+								{post.data.heroImage && (
+									<a href={`/blog/${post.id}/`} class="article-image-link">
+										<Image
+											src={post.data.heroImage}
+											alt={post.data.title}
+											width={960}
+											height={540}
+											class="article-bg-img"
+										/>
+									</a>
+								)}
+								<div class="overlay-card-box">
+									<!-- Linha de Metadados -->
+									<div class="meta-row">
+										<span>
+											<FormattedDate date={post.data.pubDate} />
+										</span>
+										<span class="meta-dot"></span>
+										{categoriesList.map((cat, idx) => (
+											<>
+												{idx > 0 && <span class="meta-dot"></span>}
+												<a href={`/blog/category/${cat.toLowerCase()}/`} class="meta-cat-link">
+													{cat}
+												</a>
+											</>
+										))}
+									</div>
+
+									<!-- Título da Matéria -->
+									<h2 class="article-title">
+										<a href={`/blog/${post.id}/`}>{post.data.title}</a>
+									</h2>
+
+									<!-- Rodapé do Card (Autor + Redes Sociais) -->
+									<div class="overlay-footer">
+										<div class="author-group">
+											<img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=40&h=40&q=80" alt={authorName} class="author-avatar-img" />
+											<span class="author-label">By {authorName}</span>
+										</div>
+
+										<ul class="share-list">
+											<li>
+												<a href={`https://www.facebook.com/sharer/sharer.php?u=/blog/${post.id}/`} target="_blank" rel="noopener" class="share-btn" aria-label="Share on Facebook">
+													<svg width="15" height="15" viewBox="0 0 25 25" fill="currentColor">
+														<path fill-rule="evenodd" clip-rule="evenodd" d="M0.5 12.567C0.5 18.533 4.833 23.494 10.5 24.5V15.833H7.5V12.5H10.5V9.833C10.5 6.833 12.433 5.167 15.167 5.167C16.033 5.167 16.967 5.3 17.833 5.433V8.5H16.3C14.833 8.5 14.5 9.233 14.5 10.167V12.5H17.7L17.167 15.833H14.5V24.5C20.167 23.494 24.5 18.534 24.5 12.567C24.5 5.93 19.1 0.5 12.5 0.5C5.9 0.5 0.5 5.93 0.5 12.567Z"/>
+													</svg>
+												</a>
+											</li>
+											<li>
+												<a href={`https://twitter.com/intent/tweet/?text=${post.data.title}&url=/blog/${post.id}/`} target="_blank" rel="noopener" class="share-btn" aria-label="Share on X">
+													<svg width="15" height="15" viewBox="0 0 25 25" fill="currentColor">
+														<path d="M19.6875 1.17188H23.5214L15.1464 10.7683L25 23.829H17.2857L11.2393 15.9094L4.32857 23.829H0.491071L9.44821 13.5612L0 1.17366H7.91071L13.3679 8.41116L19.6875 1.17188ZM18.3393 21.529H20.4643L6.75 3.35223H4.47143L18.3393 21.529Z"/>
+													</svg>
+												</a>
+											</li>
+											<li>
+												<a href={`https://www.linkedin.com/shareArticle?mini=true&url=/blog/${post.id}/&title=${post.data.title}`} target="_blank" rel="noopener" class="share-btn" aria-label="Share on LinkedIn">
+													<svg width="15" height="15" viewBox="0 0 25 25" fill="currentColor">
+														<path fill-rule="evenodd" clip-rule="evenodd" d="M1.5 3.338C1.5 2.85053 1.69365 2.38303 2.03834 2.03834C2.38303 1.69365 2.85053 1.5 3.338 1.5H21.66C21.9016 1.49961 22.1409 1.54687 22.3641 1.63907C22.5874 1.73127 22.7903 1.86661 22.9612 2.03734C23.1322 2.20807 23.2677 2.41083 23.3602 2.63401C23.4526 2.8572 23.5001 3.09643 23.5 3.338V21.66C23.5003 21.9016 23.4529 22.1409 23.3606 22.3642C23.2683 22.5875 23.1328 22.7904 22.962 22.9613C22.7912 23.1322 22.5884 23.2678 22.3651 23.3602C22.1419 23.4526 21.9026 23.5001 21.661 23.5H3.338C3.09655 23.5 2.85746 23.4524 2.6344 23.36C2.41134 23.2676 2.20867 23.1321 2.03798 22.9613C1.8673 22.7905 1.73193 22.5878 1.63962 22.3647C1.54731 22.1416 1.49987 21.9025 1.5 21.661V3.338ZM10.208 9.888H13.187V11.384C13.617 10.524 14.717 9.75 16.37 9.75C19.539 9.75 20.29 11.463 20.29 14.606V20.428H17.083V15.322C17.083 13.532 16.653 12.522 15.561 12.522C14.046 12.522 13.416 13.611 13.416 15.322V20.428H10.208V9.888ZM4.708 20.291H7.916V9.75H4.708V20.29V20.291ZM8.375 6.312C8.38105 6.58667 8.33217 6.85979 8.23124 7.11532C8.13031 7.37084 7.97935 7.60364 7.78723 7.80003C7.59511 7.99643 7.3657 8.15248 7.11246 8.25901C6.85921 8.36554 6.58724 8.42042 6.3125 8.42042C6.03776 8.42042 5.76579 8.36554 5.51255 8.25901C5.2593 8.15248 5.02989 7.99643 4.83777 7.80003C4.64565 7.60364 4.49469 7.37084 4.39376 7.11532C4.29283 6.85979 4.24395 6.58667 4.25 6.312C4.26187 5.77286 4.48439 5.25979 4.86989 4.88269C5.25539 4.50558 5.77322 4.29442 6.3125 4.29442C6.85178 4.29442 7.36961 4.50558 7.75512 4.88269C8.14062 5.25979 8.36313 5.77286 8.375 6.312V6.312Z"/>
+													</svg>
+												</a>
+											</li>
+										</ul>
+									</div>
+								</div>
+							</article>
+						);
+					})}
+				</section>
+
+				<!-- Sidebar (4 Colunas) -->
+				<aside class="blog-sidebar-feed">
+					<Sidebar />
+				</aside>
+			</div>
 		</main>
+		<CtaAgendaCerto />
 		<Footer />
 	</body>
 </html>

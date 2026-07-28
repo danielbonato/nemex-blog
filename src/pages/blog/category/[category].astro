@@ -1,0 +1,322 @@
+---
+import BaseHead from '../../../components/BaseHead.astro';
+import Footer from '../../../components/Footer.astro';
+import FormattedDate from '../../../components/FormattedDate.astro';
+import Header from '../../../components/Header.astro';
+import Sidebar from '../../../components/Sidebar.astro';
+import CtaAgendaCerto from '../../../components/CtaAgendaCerto.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../../../consts';
+import { Image } from 'astro:assets';
+import { getPublishedPosts } from '../../../lib/posts';
+
+export async function getStaticPaths() {
+	const allPosts = await getPublishedPosts();
+	const uniqueCategories = new Set();
+	
+	allPosts.forEach((post) => {
+		const cats = post.data.categories || (post.data.category ? [post.data.category] : ['Geral']);
+		cats.forEach((cat) => uniqueCategories.add(cat));
+	});
+
+	return Array.from(uniqueCategories).map((cat) => {
+        const catName = String(cat);
+		const slug = catName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+		const filteredPosts = allPosts.filter((post) => {
+            const postCats = post.data.categories || (post.data.category ? [post.data.category] : ['Geral']);
+            return postCats.includes(catName);
+        }).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+		return {
+			params: { category: slug },
+			props: { categoryName: catName, posts: filteredPosts },
+		};
+	});
+}
+
+const { categoryName, posts } = Astro.props;
+---
+
+<!doctype html>
+<html lang="pt-BR">
+	<head>
+		<BaseHead title={`${categoryName} | ${SITE_TITLE}`} description={SITE_DESCRIPTION} />
+		<!-- Import Google Fonts for Plus Jakarta Sans -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+		<style>
+			:root {
+				--looka-primary: #ea580c;
+				--looka-dark: #0f172a;
+				--looka-text: #334155;
+				--font-sans: 'Plus Jakarta Sans', sans-serif;
+				--font-syne: 'Plus Jakarta Sans', sans-serif;
+			}
+
+			body {
+				font-family: var(--font-sans);
+				color: var(--looka-text);
+				background-color: #ffffff;
+			}
+
+			/* Looka Section & Container Grid */
+			.looka-blog-section {
+				width: 100%;
+				max-width: 1240px;
+				margin: 0 auto;
+				padding: 3.5rem 1.5rem;
+			}
+            
+            .category-header {
+                margin-bottom: 2rem;
+                padding-bottom: 1rem;
+                border-bottom: 1px solid #e2e8f0;
+            }
+            .category-header h1 {
+                font-size: 2.5rem;
+                color: var(--looka-dark);
+                margin: 0;
+            }
+            .category-header p {
+                color: #64748b;
+                margin-top: 0.5rem;
+                font-size: 1.1rem;
+            }
+
+			.looka-grid {
+				display: grid;
+				grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+				gap: 3rem;
+				align-items: start;
+			}
+
+			.blog-main-feed {
+				display: flex;
+				flex-direction: column;
+				gap: 3rem;
+			}
+
+			/* Looka Blog Modern Article Card */
+			.modern-article-card {
+				position: relative;
+				display: flex;
+				flex-direction: column;
+				justify-content: flex-end;
+				min-height: 400px;
+				margin-bottom: 2rem;
+				border-radius: 16px;
+				overflow: hidden;
+				padding: 1.5rem;
+				background-color: #f3f4f6;
+			}
+
+			@media (min-width: 768px) {
+				.modern-article-card {
+					min-height: 520px;
+					padding: 2.5rem;
+				}
+			}
+
+			.article-image-link {
+				position: absolute;
+				inset: 0;
+				z-index: 1;
+			}
+
+			.article-bg-img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				transition: transform 0.6s ease;
+			}
+
+			.modern-article-card:hover .article-bg-img {
+				transform: scale(1.04);
+			}
+
+			/* Floating Overlay Content Box */
+			.overlay-card-box {
+				position: relative;
+				z-index: 10;
+				padding: 2rem 2.5rem;
+				background-color: rgba(255, 255, 255, 0.96);
+				backdrop-filter: blur(12px);
+				-webkit-backdrop-filter: blur(12px);
+				border-radius: 12px;
+				box-shadow: 0 12px 35px rgba(0, 14, 48, 0.08);
+			}
+
+			/* Meta Row */
+			.meta-row {
+				display: flex;
+				align-items: center;
+				flex-wrap: wrap;
+				gap: 0.6rem;
+				font-size: 0.9rem;
+				font-weight: 500;
+				color: var(--looka-primary);
+				margin-bottom: 0.85rem;
+			}
+
+			.meta-dot {
+				display: inline-block;
+				width: 4px;
+				height: 4px;
+				border-radius: 50%;
+				background-color: var(--looka-primary);
+			}
+
+			.meta-cat-link {
+				color: var(--looka-primary);
+				text-decoration: none;
+				transition: opacity 0.2s ease;
+			}
+
+			.meta-cat-link:hover {
+				text-decoration: underline;
+			}
+
+			/* Article Title */
+			.article-title {
+				font-family: var(--font-syne);
+				font-size: 1.65rem;
+				font-weight: 700;
+				line-height: 1.3;
+				color: var(--looka-dark);
+				margin: 0 0 1.25rem 0;
+				letter-spacing: -0.01em;
+			}
+
+			.article-title a {
+				color: var(--looka-dark);
+				text-decoration: none;
+				transition: color 0.2s ease;
+			}
+
+			.article-title a:hover {
+				color: var(--looka-primary);
+			}
+
+			/* Footer Info Bar */
+			.overlay-footer {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				flex-wrap: wrap;
+				gap: 1rem;
+				padding-top: 1rem;
+				border-top: 1px solid #f3f4f6;
+			}
+
+			.author-group {
+				display: flex;
+				align-items: center;
+				gap: 0.75rem;
+			}
+
+			.author-avatar-img {
+				width: 40px;
+				height: 40px;
+				border-radius: 50%;
+				object-fit: cover;
+				background-color: #f3f4f6;
+			}
+
+			.author-label {
+				font-size: 0.9rem;
+				font-weight: 600;
+				color: #374151;
+			}
+
+			@media (max-width: 1024px) {
+				.looka-grid {
+					grid-template-columns: 1fr;
+					gap: 2.5rem;
+				}
+
+				.looka-blog-section {
+					padding: 2rem 1rem;
+				}
+			}
+
+			@media (max-width: 640px) {
+				.overlay-card-box {
+					margin-left: 2%;
+					margin-right: 2%;
+					padding: 1.25rem 1.25rem;
+				}
+
+				.article-title {
+					font-size: 1.3rem;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main class="looka-blog-section">
+            <div class="category-header">
+                <h1>{categoryName}</h1>
+                <p>Navegando pelos posts da categoria "{categoryName}"</p>
+            </div>
+			<div class="looka-grid">
+				<!-- Área Principal do Conteúdo -->
+				<section class="blog-main-feed">
+					{posts.map((post: any) => {
+						const categoriesList = post.data.categories || (post.data.category ? [post.data.category] : ['Geral']);
+						const authorName = post.data.author || 'Equipe Agenda Certo';
+
+						return (
+							<article class="modern-article-card">
+								{post.data.heroImage && (
+									<a href={`/blog/${post.id}/`} class="article-image-link">
+										<img
+											src={post.data.heroImage}
+											alt={post.data.title}
+											width="960"
+											height="540"
+											class="article-bg-img"
+										/>
+									</a>
+								)}
+								<div class="overlay-card-box">
+									<div class="meta-row">
+										<span>
+											<FormattedDate date={post.data.pubDate} />
+										</span>
+										<span class="meta-dot"></span>
+										{categoriesList.map((cat: string, idx: number) => (
+											<>
+												{idx > 0 && <span class="meta-dot"></span>}
+												<a href={`/blog/category/${cat.toLowerCase().replace(/[^a-z0-9]+/g, '-')}/`} class="meta-cat-link">
+													{cat}
+												</a>
+											</>
+										))}
+									</div>
+
+									<h2 class="article-title">
+										<a href={`/blog/${post.id}/`}>{post.data.title}</a>
+									</h2>
+
+									<div class="overlay-footer">
+										<div class="author-group">
+											<img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=40&h=40&q=80" alt={authorName} class="author-avatar-img" />
+											<span class="author-label">Por {authorName}</span>
+										</div>
+									</div>
+								</div>
+							</article>
+						);
+					})}
+				</section>
+
+				<aside class="blog-sidebar-feed">
+					<Sidebar />
+				</aside>
+			</div>
+		</main>
+		<CtaAgendaCerto />
+		<Footer />
+	</body>
+</html>
