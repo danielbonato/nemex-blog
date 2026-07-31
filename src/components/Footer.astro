@@ -2,80 +2,242 @@
 const today = new Date();
 ---
 
-<footer class="agenda-footer">
-	<div class="agenda-footer-container">
-		<img src="https://www.agendacerto.com.br/agendacerto-white.svg" alt="Agenda Certo" class="agenda-footer-logo"/>
-		<p class="agenda-footer-text">
-			Agenda Certo é uma marca operada por DANIEL BONATO QUINTANILHA (Nemex) - CNPJ 65.646.800/0001-20.
-		</p>
-		<div class="agenda-footer-links">
-			<a class="agenda-footer-link" href="https://www.agendacerto.com.br/termos-de-uso">Termos de Uso</a>
-			<a class="agenda-footer-link" href="https://www.agendacerto.com.br/politica-de-privacidade">Política de Privacidade</a>
+<!-- Section 1: Portfólio, Contato e Informações -->
+<section class="nemex-info-section">
+	<div class="nemex-info-container">
+		<div class="nemex-info-grid">
+			<div class="nemex-brand-col">
+				<img alt="Nemex" class="nemex-brand-img" src="/nemex-ico-negative.png" />
+				<p class="nemex-brand-tagline">Construindo o futuro digital, um produto de cada vez.</p>
+			</div>
+			<div class="nemex-nav-col">
+				<p class="nemex-col-title">Portfólio</p>
+				<ul class="nemex-link-list">
+					<li><a href="https://www.viabonus.com.br/?origem=blog" target="_blank" rel="noopener noreferrer" class="nemex-col-link">Via Bônus</a></li>
+					<li><a href="https://jorna.com.br/?origem=blog" target="_blank" rel="noopener noreferrer" class="nemex-col-link">Jorna</a></li>
+					<li><a href="https://voltapix.com.br/?origem=blog" target="_blank" rel="noopener noreferrer" class="nemex-col-link">VoltaPix</a></li>
+					<li><a href="https://linhasegura.com.br/?origem=blog" target="_blank" rel="noopener noreferrer" class="nemex-col-link">Linha Segura</a></li>
+					<li><a href="https://www.agendacerto.com.br/?origem=blog" target="_blank" rel="noopener noreferrer" class="nemex-col-link">Agenda Certo</a></li>
+				</ul>
+			</div>
+			<div class="nemex-nav-col">
+				<p class="nemex-col-title">Contato</p>
+				<div class="nemex-contact-box">
+					<a href="https://wa.me/5511920914201?text=Oi.%20Estou%20entrando%20em%20contato%20para%20fazer%20meu%20site." target="_blank" rel="noopener noreferrer" class="nemex-col-link block">WhatsApp</a>
+					<p class="nemex-location">São Paulo, Brasil</p>
+				</div>
+			</div>
 		</div>
-		<a target="_blank" rel="noopener noreferrer" class="agenda-footer-credit" href="http://www.nemex.com.br">
-			Desenvolvido por Nemex.
-		</a>
+	</div>
+</section>
+
+<!-- Section 2: Copyright & Links Legais -->
+<footer class="nemex-bottom-footer">
+	<div class="nemex-bottom-container">
+		<p class="nemex-copyright">
+			© 2026 Nemex e seus produtos são marcas operadas por DANIEL BONATO QUINTANILHA — CNPJ 65.646.800/0001-20.
+		</p>
+		<div class="nemex-legal-links">
+			<a href="https://www.nemex.com.br/politica.html?origem=blog" target="_blank" rel="noopener noreferrer" class="nemex-legal-link">Privacidade</a>
+			<a href="https://www.nemex.com.br/termos.html?origem=blog" target="_blank" rel="noopener noreferrer" class="nemex-legal-link">Termos</a>
+			<a href="https://wa.me/5511920914201?text=Oi.%20Vim%20pelo%20Blog%20da%20Nemex." target="_blank" rel="noopener noreferrer" class="nemex-legal-link">Suporte</a>
+		</div>
 	</div>
 </footer>
 
 <style>
-	.agenda-footer {
-		background-color: #111827; /* bg-gray-900 */
-		padding-top: 1.5rem; /* py-6 */
-		padding-bottom: 1.5rem;
-		margin-top: auto; /* mt-auto */
-		border-top: 1px solid rgba(255, 255, 255, 0.1); /* border-t border-white/10 */
+	/* --- Banner CTA --- */
+	.nemex-cta-banner {
+		padding: 6rem 0;
+		background-color: #09090b; /* zinc-950 */
+		border-top: 1px solid rgba(255, 255, 255, 0.05);
+		overflow: hidden;
 		width: 100%;
 	}
-	.agenda-footer-container {
+	.nemex-cta-container {
 		margin: 0 auto;
+		max-width: 80rem; /* max-w-7xl */
+		padding: 0 1rem;
+	}
+	@media (min-width: 768px) {
+		.nemex-cta-container { padding: 0 2rem; }
+	}
+	.nemex-cta-flex {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 2.5rem;
+	}
+	@media (min-width: 768px) {
+		.nemex-cta-flex {
+			flex-direction: row;
+			align-items: flex-end;
+		}
+	}
+	.nemex-cta-title {
+		font-size: 3rem;
+		font-weight: 700;
+		line-height: 0.95;
+		color: #ffffff;
+		margin: 0 0 1rem 0;
+	}
+	@media (min-width: 768px) {
+		.nemex-cta-title { font-size: 4.5rem; }
+	}
+	.nemex-cta-desc {
+		color: #71717a; /* zinc-500 */
+		max-width: 28rem;
+		font-size: 1.125rem;
+		margin: 0;
+		line-height: 1.5;
+	}
+	.nemex-cta-action {
+		flex-shrink: 0;
+		text-align: center;
+	}
+	@media (min-width: 768px) {
+		.nemex-cta-action { text-align: right; }
+	}
+	.nemex-wa-btn {
+		display: inline-flex;
+		height: 3.5rem;
+		align-items: center;
+		justify-content: center;
+		border-radius: 9999px;
+		padding: 0 2rem;
+		font-size: 1rem;
+		font-weight: 500;
+		background-color: #22c55e; /* green-500 */
+		color: #ffffff;
+		text-decoration: none;
+		gap: 0.75rem;
+		transition: background-color 0.2s ease;
+	}
+	.nemex-wa-btn:hover {
+		background-color: #16a34a; /* green-600 */
+	}
+	.nemex-cta-subtext {
+		font-size: 0.75rem;
+		color: #3f3f46; /* zinc-700 */
+		margin-top: 0.75rem;
+		font-weight: 600;
+	}
+
+	/* --- Info Section --- */
+	.nemex-info-section {
+		padding: 4rem 0;
+		background-color: #050505;
+		width: 100%;
+	}
+	.nemex-info-container {
+		margin: 0 auto;
+		max-width: 80rem;
+		padding: 0 1rem;
+	}
+	@media (min-width: 768px) {
+		.nemex-info-container { padding: 0 2rem; }
+	}
+	.nemex-info-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 3rem;
+	}
+	@media (min-width: 768px) {
+		.nemex-info-grid {
+			grid-template-columns: 1fr 1fr 1fr;
+		}
+	}
+	.nemex-brand-img {
+		height: 1.75rem;
+		width: auto;
+		object-fit: contain;
+		margin-bottom: 1.25rem;
+	}
+	.nemex-brand-tagline {
+		color: #d4d4d8; /* zinc-300 */
+		font-size: 0.875rem;
+		line-height: 1.625;
+		max-width: 20rem;
+		margin: 0;
+	}
+	.nemex-col-title {
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: #d4d4d8; /* zinc-300 */
+		text-transform: uppercase;
+		letter-spacing: 0.18em;
+		margin: 0 0 1.25rem 0;
+	}
+	.nemex-link-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+	.nemex-col-link {
+		font-size: 0.875rem;
+		color: #d4d4d8; /* zinc-300 */
+		text-decoration: none;
+		transition: color 0.2s ease;
+	}
+	.nemex-col-link:hover {
+		color: #ffffff;
+	}
+	.nemex-contact-box {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+	.nemex-location {
+		font-size: 0.875rem;
+		color: #d4d4d8;
+		margin: 0;
+	}
+
+	/* --- Bottom Copyright Footer --- */
+	.nemex-bottom-footer {
+		padding: 3rem 0;
+		background-color: #050505;
+		border-top: 1px solid rgba(255, 255, 255, 0.05);
+		width: 100%;
+	}
+	.nemex-bottom-container {
+		margin: 0 auto;
+		max-width: 80rem;
+		padding: 0 1rem;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 1rem; /* gap-4 */
-		text-align: center;
-		width: 100%;
-		max-width: 80rem; /* container mx-auto */
-		padding-left: 1rem;
-		padding-right: 1rem;
+		justify-content: space-between;
+		gap: 1.5rem;
 	}
-	.agenda-footer-logo {
-		height: 1.5rem; /* h-6 */
-		width: auto;
-		opacity: 0.9;
+	@media (min-width: 768px) {
+		.nemex-bottom-container {
+			flex-direction: row;
+			padding: 0 2rem;
+		}
 	}
-	.agenda-footer-text {
-		font-size: 0.75rem; /* text-xs */
-		color: #64748b; /* text-slate-500 */
-		max-width: 42rem; /* max-w-2xl */
+	.nemex-copyright {
+		color: #52525b; /* zinc-600 */
+		font-size: 0.875rem;
 		margin: 0;
+		line-height: 1.5;
 	}
-	.agenda-footer-links {
+	.nemex-legal-links {
 		display: flex;
-		flex-wrap: wrap;
 		align-items: center;
-		justify-content: center;
-		gap: 1rem; /* gap-4 */
-		font-size: 0.875rem; /* text-sm */
-		color: #94a3b8; /* text-slate-400 */
+		gap: 2rem;
 	}
-	.agenda-footer-link {
-		color: #94a3b8;
+	.nemex-legal-link {
+		font-size: 0.875rem;
+		color: #52525b; /* zinc-600 */
 		text-decoration: none;
-		transition: color 0.2s;
+		transition: color 0.2s ease;
 	}
-	.agenda-footer-link:hover {
-		color: #ffffff; /* hover:text-white */
-	}
-	.agenda-footer-credit {
-		font-size: 0.75rem; /* text-xs */
-		font-weight: 600; /* font-semibold */
-		letter-spacing: 0.05em; /* tracking-wider */
-		color: #60a5fa; /* text-blue-400 */
-		text-decoration: none;
-		transition: color 0.2s;
-	}
-	.agenda-footer-credit:hover {
-		color: #93c5fd; /* hover:text-blue-300 */
+	.nemex-legal-link:hover {
+		color: #ffffff;
 	}
 </style>

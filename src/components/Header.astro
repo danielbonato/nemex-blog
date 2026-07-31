@@ -3,12 +3,14 @@ import { SITE_TITLE } from '../consts';
 ---
 <header class="agenda-header">
 	<div class="agenda-header-container">
-		<a class="agenda-logo-link" href="/">
-			<!-- Use absolute URL as requested -->
-			<img src="https://www.agendacerto.com.br/agendacerto-white.svg" alt="Agenda Certo" class="agenda-logo"/>
-		</a>
+		<div class="agenda-branding">
+			<a class="nemex-logo-link" href="/">
+				<img src="/nemex-ico-negative.png" alt="Nemex" class="nemex-logo"/>
+			</a>
+			<span class="blog-badge">BLOG</span>
+		</div>
 		<div class="agenda-actions">
-			<a class="agenda-signup-btn" href="https://www.agendacerto.com.br/?origem=blog" target="_blank" rel="noopener noreferrer">
+			<a class="agenda-signup-btn" href="https://www.nemex.com.br?origem=blog" target="_blank" rel="noopener noreferrer">
 				Visite o Site
 			</a>
 		</div>
@@ -37,14 +39,35 @@ import { SITE_TITLE } from '../consts';
 	@media (min-width: 1024px) {
 		.agenda-header-container { padding-left: 2rem; padding-right: 2rem; }
 	}
-	.agenda-logo-link {
+	.agenda-branding {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+	.nemex-logo-link {
 		display: flex;
 		align-items: center;
 		text-decoration: none;
+		transition: opacity 0.2s ease;
 	}
-	.agenda-logo {
+	.nemex-logo-link:hover {
+		opacity: 0.85;
+	}
+	.nemex-logo {
 		height: 1.75rem; /* h-7 */
 		width: auto;
+		object-fit: contain;
+	}
+	.blog-badge {
+		font-size: 0.75rem;
+		font-weight: 700;
+		letter-spacing: 0.15em;
+		color: #ef4444;
+		background: rgba(239, 68, 68, 0.12);
+		border: 1px solid rgba(239, 68, 68, 0.3);
+		padding: 0.2rem 0.5rem;
+		border-radius: 4px;
+		user-select: none;
 	}
 	.agenda-actions {
 		display: flex;
@@ -54,20 +77,20 @@ import { SITE_TITLE } from '../consts';
 	.agenda-signup-btn {
 		white-space: nowrap; /* whitespace-nowrap */
 		border-radius: 0.5rem; /* rounded-lg */
-		background-color: #ea580c; /* bg-orange-600 */
+		background-color: #ef4444; /* Nemex primary red */
 		padding: 0.5rem 0.875rem; /* px-3.5 py-2 */
 		font-size: 0.875rem; /* text-sm */
 		font-weight: 600; /* font-semibold */
 		color: #ffffff; /* text-white */
 		text-decoration: none;
-		box-shadow: 0 10px 15px -3px rgba(234, 88, 12, 0.25); /* shadow-lg shadow-orange-600/25 */
+		box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.25);
 		transition: all 0.2s;
 	}
 	@media (min-width: 640px) {
 		.agenda-signup-btn { padding-left: 1rem; padding-right: 1rem; }
 	}
 	.agenda-signup-btn:hover {
-		background-color: #c2410c; /* hover:bg-orange-700 */
-		box-shadow: 0 10px 15px -3px rgba(234, 88, 12, 0.4);
+		background-color: #dc2626; /* hover:bg-red-600 */
+		box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.4);
 	}
 </style>
