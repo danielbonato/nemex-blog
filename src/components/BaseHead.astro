@@ -14,7 +14,7 @@ interface Props {
 
 const { title, description, image, article = false } = Astro.props;
 
-// Format page title to always include "Blog Agenda Certo" on internal pages
+// Format page title to always include "Blog Nemex" on internal pages
 const pageTitle = title === SITE_TITLE || title.includes(SITE_TITLE)
 	? title
 	: `${title} | ${SITE_TITLE}`;
@@ -24,7 +24,7 @@ const siteUrl = Astro.site || Astro.url;
 const canonicalURL = new URL(Astro.url.pathname, siteUrl);
 
 // Resolve OG image URL safely
-let imageSrc = '/og-image.jpg';
+let imageSrc = '/nemex-ico-negative.png';
 if (image) {
 	if (typeof image === 'string') {
 		imageSrc = image;
@@ -45,10 +45,10 @@ const schemaData = article
 			'url': canonicalURL.href,
 			'publisher': {
 				'@type': 'Organization',
-				'name': 'Agenda Certo',
+				'name': 'Nemex',
 				'logo': {
 					'@type': 'ImageObject',
-					'url': new URL('/favicon.png', siteUrl).href,
+					'url': new URL('/nemex-ico-negative.png', siteUrl).href,
 				},
 			},
 	  }
@@ -66,9 +66,9 @@ const schemaData = article
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 
 <!-- Favicon & Icons -->
-<link rel="icon" type="image/png" href="/favicon.png" />
-<link rel="shortcut icon" href="/favicon.ico" />
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<link rel="icon" type="image/png" href="/nemex-ico-negative.png" />
+<link rel="shortcut icon" href="/nemex-ico-negative.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/nemex-ico-negative.png" />
 <link rel="sitemap" href="/sitemap-index.xml" />
 <link
 	rel="alternate"
