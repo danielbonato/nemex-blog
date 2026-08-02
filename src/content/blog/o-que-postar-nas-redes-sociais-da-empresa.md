@@ -1,7 +1,7 @@
 ---
 title: "O que postar nas redes sociais da empresa"
 description: "Escolha três assuntos e não saia deles. O método que resolve a pauta da semana em minutos, com exemplos prontos por tipo de negócio."
-pubDate: "2026-08-05"
+pubDate: "2026-08-01"
 heroImage: "../../assets/o-que-postar-nas-redes-sociais-da-empresa-cover.png"
 categories:
   - "Conteúdo"
